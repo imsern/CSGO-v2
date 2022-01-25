@@ -17,10 +17,13 @@ public class Player : IPlayer
         
     }
 
-
-    public void ChooseSite()
+    public async Task PlantBomb()
     {
         throw new NotImplementedException();
+    }
+    public async void ChooseSite()
+    {
+        
     }
 
     public void Shoot(Player target)

@@ -21,7 +21,7 @@ public class CounterTerrorist : Player
         Team = "CT";
         Health = 100;
         Armor = 0;
-        Money = 800;
+        Money = 4500;
         isDead = false;
         Weapon = _cTweps[0];
     }
@@ -71,7 +71,6 @@ public class CounterTerrorist : Player
                 target.isDead = true;
                 Money += 300;
                 Console.WriteLine($"{target.Name} died!");
-
             }
         }
         //else Console.WriteLine($"Counter-Terrorist: {Name} missed {target.Name}! ");

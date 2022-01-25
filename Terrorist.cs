@@ -22,7 +22,7 @@ public class Terrorist : Player
         Team = "T";
         Health = 100;
         Armor = 0;
-        Money = 800;
+        Money = 4500;
         isDead = false;
         Weapon = _tweps[0];
     }
