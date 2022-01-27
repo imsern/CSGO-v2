@@ -8,7 +8,7 @@ public class CounterTerrorist : Player
     private Random rnd = new();
 
     public bool defusekit { get; set; }
-    private readonly List<Weapon> _cTweps = new()
+    public readonly List<Weapon> _cTweps = new()
     {
         new Weapon("USP", 10, 250, 70),
         new Weapon("Deagle", 20, 750, 50),
@@ -21,7 +21,7 @@ public class CounterTerrorist : Player
         Team = "CT";
         Health = 100;
         Armor = 0;
-        Money = 4500;
+        Money = 800;
         isDead = false;
         Weapon = _cTweps[0];
     }
@@ -50,6 +50,17 @@ public class CounterTerrorist : Player
     //    Console.WriteLine("Remaining CT is going to the bomb");
     //}
 
+    public async Task DefuseBomb()
+    {
+        Console.WriteLine($"{Name} is defusing the bomb!");
+        if (defusekit) await Task.Delay(3000);
+        else await Task.Delay(5000);
+        Match.BombDefused = true;
+        Match.CTscore++;
+        Console.WriteLine("Bomb has been defused!");
+        await Task.Delay(1000);
+    }
+
     public async Task ChooseSite() // sette 2 til å gå B - 3 til å gå A, RAndom hver runde
     {
         var randomSite = rnd.Next(0, 9);
@@ -64,16 +75,23 @@ public class CounterTerrorist : Player
         var hit = rnd.Next(0, 100);
         if (hit <= Weapon.Accuracy)
         {
-            //Console.WriteLine($"Counter-Terrorist: {Name} hits {target.Name} for {Weapon.Damage} damage.");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine($"{Name} hits {target.Name} for {Weapon.Damage} damage.");
             target.Health -= Weapon.Damage;
             if (target.Health <= 0)
             {
                 target.isDead = true;
+                target.Health = 0;
                 Money += 300;
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"{target.Name} died!");
             }
         }
-        //else Console.WriteLine($"Counter-Terrorist: {Name} missed {target.Name}! ");
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine($"{Name} missed {target.Name}!");
+        }
     }
 
     public bool CheckTeamEco(int value)
@@ -132,13 +150,13 @@ public class CounterTerrorist : Player
 
     public void BuyArmor()
     {
-        if (Money > 450)
+        if (Money > 450 && defusekit == false)
         {
             defusekit = true;
             Money -= 450;
             Console.WriteLine($"{Name} bought Defuse Kit");
         }
-        if (Money > 1000)
+        if (Money > 1000 && Armor == 0)
         {
             Armor = 50;
             Health = 100 + Armor;

@@ -9,7 +9,7 @@ public class Terrorist : Player
     private Random rnd = new();
 
 
-    private List<Weapon> _tweps = new()
+    public readonly List<Weapon> _tweps = new()
     {
         new Weapon("Glock", 10, 150, 70),
         new Weapon("Deagle", 20, 750, 50),
@@ -22,7 +22,7 @@ public class Terrorist : Player
         Team = "T";
         Health = 100;
         Armor = 0;
-        Money = 4500;
+        Money = 800;
         isDead = false;
         Weapon = _tweps[0];
     }
@@ -64,17 +64,23 @@ public class Terrorist : Player
         var hit = rnd.Next(0, 100);
         if (hit <= Weapon.Accuracy)
         {
-            //Console.WriteLine($"Terrorist: {Name} hits {target.Name} for {Weapon.Damage} damage.");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"{Name} hits {target.Name} for {Weapon.Damage} damage.");
             target.Health -= Weapon.Damage;
             if (target.Health <= 0)
             {
                 target.isDead = true;
+                target.Health = 0;
                 Money += 300;
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"{target.Name} died!");
-
             }
         }
-        //else Console.WriteLine($"Terrorist: {Name} missed {target.Name}! ");
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine($"{Name} missed {target.Name}! ");
+        }
     }
 
     public bool CheckTeamEco(int value)
@@ -133,7 +139,7 @@ public class Terrorist : Player
 
     public void BuyArmor()
     {
-        if (Money > 1000)
+        if (Money > 1000 && Armor == 0)
         {
             Armor = 50;
             Health = 100 + Armor;
