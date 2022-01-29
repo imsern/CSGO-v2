@@ -21,9 +21,9 @@ public class Player : IPlayer
     {
         throw new NotImplementedException();
     }
-    public async void ChooseSite()
+    public void ChooseSite()
     {
-        
+        throw new NotImplementedException();
     }
 
     public void Shoot(Player target)

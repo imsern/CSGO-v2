@@ -1,28 +1,45 @@
-﻿//namespace CSGO_v2;
+﻿using System.Reflection.Metadata.Ecma335;
 
-//public class GameEngine
-//{
-//    private Match match = new Match(16, 30);
+namespace CSGO_v2;
 
+public class GameEngine
+{
+    private int Matchrounds { get; set; }
+    private int Maxround { get; set; }
 
-
-
-//    public async Task StartRound()
-//    {
-//        while (!match.GameEnded)
-//        {
-//            match.Round++;
-//            Console.WriteLine($"Runde: {match.Round}");
-//            match.EconomyCheck("CT");
-//            match.EconomyCheck("T");
-//            await match.chooseSiteBoth();
-//            await Task.Delay(100);
-//            await match.Fight();
-//            await Task.Delay(1000);
-//        }
-//        while (match.BombIsPlanted)
-//        {
-
-//        }
-//    }
-//}
+    public GameEngine(int matchrounds, int maxround)
+    {
+        Matchrounds = matchrounds;
+        Maxround = maxround;
+    }
+    public async Task Run()
+    {
+        var match = new Match(Matchrounds, Maxround);
+        match.Introduction();
+        var txt = Console.ReadLine().ToLower();
+        if (txt == "start")
+            while (!match.GameEnded)
+            {                               // This section will be used to reset all values to normal before a round restarts
+                match.StartOrResetRounds();
+                match.EconomyCheck("CT");
+                match.EconomyCheck("T");
+                await match.chooseSiteBoth();
+                while (!match.RoundEnded) // Everything happening while a bomb isnt planted
+                {
+                    match.Fight();
+                    if (!match.checkSiteDeaths() && !Match.BombIsPlanted) match.ChooseTandPlantBomb();
+                    if (!match.RoundEnded)
+                    {
+                        if (!Match.BombIsPlanted) match.ChanceToPlant();
+                        if (Match.BombIsPlanted)
+                        {
+                            match.CountDown();
+                            match.AfterPlantWinCheck();
+                        }
+                    }
+                    await Task.Delay(1000);
+                    Console.Clear();
+                }
+            }
+    }
+}

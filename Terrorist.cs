@@ -11,8 +11,8 @@ public class Terrorist : Player
 
     public readonly List<Weapon> _tweps = new()
     {
-        new Weapon("Glock", 10, 150, 70),
-        new Weapon("Deagle", 20, 750, 50),
+        new Weapon("Glock", 15, 250, 90),
+        new Weapon("Deagle", 25, 750, 50),
         new Weapon("AK", 40, 3000, 55),
         new Weapon("AWP", 150, 4900, 30)
     };
@@ -40,10 +40,10 @@ public class Terrorist : Player
         Console.WriteLine($"....");
         await Task.Delay(1000);
         Console.WriteLine($"Bomb has been planted!");
-        
+        Match.BombIsPlanted = true;
     }
     
-    public async Task ChooseSite(int site) // velger om Terror går A eller B
+    public void ChooseSite(int site) // velger om Terror går A eller B
     {
         
             if (site <= 4)
@@ -54,7 +54,6 @@ public class Terrorist : Player
             {
                 chosenSite = 'B';
             }
-        
     }
 
     public void Shoot(CounterTerrorist target)

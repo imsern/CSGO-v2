@@ -10,8 +10,8 @@ public class CounterTerrorist : Player
     public bool defusekit { get; set; }
     public readonly List<Weapon> _cTweps = new()
     {
-        new Weapon("USP", 10, 250, 70),
-        new Weapon("Deagle", 20, 750, 50),
+        new Weapon("USP", 15, 250, 90),
+        new Weapon("Deagle", 25, 750, 50),
         new Weapon("M4A1", 40, 3000, 55),
         new Weapon("AWP", 150, 4900, 20)
     };
@@ -26,30 +26,6 @@ public class CounterTerrorist : Player
         Weapon = _cTweps[0];
     }
 
-    //public async Task FindRemaindingCT(List<CounterTerrorist> playerList)
-    //{
-    //    var teamMemberAliveList = playerList.FindAll(x => x.isDead == false).ToList();
-    //    foreach (var ct in teamMemberAliveList)
-    //    {
-    //        Console.WriteLine($"{ct.Name} swapping from site: {ct.chosenSite}");
-    //        if (chosenSite == 'A') chosenSite = 'B';
-    //        else if (chosenSite == 'B') chosenSite = 'A';
-    //    }
-    //    Console.WriteLine("Remaining CT is going to the bomb");
-        //await GoToBomb(teamMemberAliveList);
-    //}
-
-    //public async Task GoToBomb(List<CounterTerrorist> teamMemberAliveList)
-    //{
-    //    foreach (var ct in teamMemberAliveList)
-    //    {
-    //        if (chosenSite == 'A') chosenSite = 'B';
-    //        if (chosenSite == 'B') chosenSite = 'A';
-    //    }
-
-    //    Console.WriteLine("Remaining CT is going to the bomb");
-    //}
-
     public async Task DefuseBomb()
     {
         Console.WriteLine($"{Name} is defusing the bomb!");
@@ -61,7 +37,7 @@ public class CounterTerrorist : Player
         await Task.Delay(1000);
     }
 
-    public async Task ChooseSite() // sette 2 til å gå B - 3 til å gå A, RAndom hver runde
+    public new void ChooseSite() // sette 2 til å gå B - 3 til å gå A, RAndom hver runde
     {
         var randomSite = rnd.Next(0, 9);
         if (randomSite <= 4) chosenSite = 'A';
@@ -94,7 +70,7 @@ public class CounterTerrorist : Player
         }
     }
 
-    public bool CheckTeamEco(int value)
+    public new bool CheckTeamEco(int value)
     {
         if (Money > value)
         {
@@ -129,7 +105,7 @@ public class CounterTerrorist : Player
         }
     }
 
-    public void BuyWep(string weapon)
+    public new void BuyWep(string weapon)
     {
         if (weapon == "AWP")
         {
@@ -148,7 +124,7 @@ public class CounterTerrorist : Player
         }
     }
 
-    public void BuyArmor()
+    public new void BuyArmor()
     {
         if (Money > 450 && defusekit == false)
         {

@@ -10,7 +10,8 @@ public class Match
     public int Round { get; set; }
     public int MatchRound { get; set; }
     public int MaxRounds { get; set; }
-    public bool BombIsPlanted { get; set; }
+    public static bool BombIsPlanted { get; set; }
+    public int BombTimer { get; set; }
     public static bool BombDefused { get; set; }
     public bool RoundEnded { get; set; }
     public bool GameEnded { get; set; }
@@ -41,10 +42,12 @@ public class Match
         Tscore = 0;
         CTscore = 0;
         Round = 0;
+        BombTimer = 30;
         MatchRound = matchround;
         MaxRounds = maxrounds;
         BombIsPlanted = false;
         GameEnded = false;
+        RoundEnded = false;
         initPlayers();
     }
     private void initPlayers()
@@ -55,45 +58,27 @@ public class Match
             Terrorists.Add(new Terrorist(_teamNames1[i]));
         }
     }
-    public void Startmatch()
-    {
-        Introduction();
-    }
 
-    public async Task StartRound()
+    public async Task ChanceToPlant()
     {
-        while (!GameEnded)
+        var toPlantOrNotToPlant = random.Next(0, 7) == 3;
+        if (toPlantOrNotToPlant)
         {
-            StartOrResetRounds();
-            EconomyCheck("CT");
-            EconomyCheck("T");
-            await chooseSiteBoth();
-            PrintPlayerInfo();
-            await Task.Delay(1000);
-            var isAlive = true;
-            while (isAlive) // Loops through the first fight of the round, until one of the teams on the same site is dead.
-            {
-                Fight();
-                isAlive = checkSiteDeaths(isAlive);
-                await Task.Delay(1000);
-            }
-            if (!BombIsPlanted) // if CT dies on the site, we go further to the plantbomb method, and CT will move towards the bomb. Then the fight will happen again
-            {
-                var randomPlayer = PickRandomPlayer(Terrorists);
-                if (randomPlayer != -1)
-                {
-                    await Terrorists[randomPlayer].PlantBomb();
-                    BombIsPlanted = true;
-                    await chooseSiteBoth();
-                    await CountDown();
-                }
-            }
-            await Task.Delay(3000);
-            Console.Clear();
+            ChooseTandPlantBomb();
         }
     }
 
-    private void StartOrResetRounds()
+    public async Task ChooseTandPlantBomb()
+    {
+        var randomPlayer = PickRandomPlayer(Terrorists);
+        if (randomPlayer != -1)
+        {
+            Terrorists[randomPlayer].PlantBomb();
+            BombIsPlanted = true;
+        }
+    }
+
+    public void StartOrResetRounds()
     {
         foreach (var ct in CounterTerrorists)
         {
@@ -139,7 +124,7 @@ public class Match
         Console.WriteLine($" T: {Tscore}");
     }
 
-    private void PrintPlayerInfo()
+    public void PrintPlayerInfo()
     {
         Console.WriteLine($"Terrorists are going: {Terrorists[0].chosenSite}");
         Console.Write($"CT is going: ");
@@ -150,57 +135,56 @@ public class Match
         Console.Write("\n");
     }
 
-    public async Task CountDown()
+    public void CountDown()
     {
-        var index = 30;
-        
         while (!BombDefused || !RoundEnded)
         {
-            if (BombDefused)
-            {
-                Console.WriteLine($"Counter-Terrorists win!");
-                CTscore++;
-                foreach (var ct in CounterTerrorists)
-                {
-                    ct.Money += 3500;
-                }
-                foreach (var t in Terrorists)
-                {
-                    t.Money += 2000;
-                }
-                RoundEnded = true;
-                BombIsPlanted = false;
-                break;
-            }
-            Console.WriteLine($"Timer: {index}");
-            await Task.Delay(500);
-            Fight();
-            await Task.Delay(500);
-            // T = 0, CT = 1
-            var totalDeaths = checkSiteDeaths();
-            var randomPlayer = PickRandomPlayer(CounterTerrorists);
-            if (totalDeaths[0] == 5 && randomPlayer != -1) CounterTerrorists[randomPlayer].DefuseBomb();
-            if (totalDeaths[1] == 5) index = 0;
-            index--;
-            if (index <= 0)
-            {
-                Console.WriteLine($"Terrorists win!");
-                Tscore++;
-                foreach (var t in Terrorists)
-                {
-                    t.Money += 3500;
-                }
-                foreach (var ct in CounterTerrorists)
-                {
-                    ct.Money += 2000;
-                }
-                RoundEnded = true;
-                BombIsPlanted = false;
-                break;
-            }
+            BombTimer--;
         }
     }
-    private int PickRandomPlayer(List<Terrorist> playerList)
+
+    public async Task AfterPlantWinCheck()
+    {
+        if (BombDefused)
+        {
+            Console.WriteLine($"Counter-Terrorists win!");
+            CTscore++;
+            foreach (var ct in CounterTerrorists)
+            {
+                ct.Money += 3500;
+            }
+            foreach (var t in Terrorists)
+            {
+                t.Money += 2000;
+            }
+            RoundEnded = true;
+            BombIsPlanted = false;
+        }
+        // T = 0, CT = 1
+        var totalDeaths = CountDownDeathCheck();
+        var randomPlayer = PickRandomPlayer(CounterTerrorists);
+        if (totalDeaths[0] == 5 && randomPlayer != -1) CounterTerrorists[randomPlayer].DefuseBomb();
+        if (totalDeaths[1] == 5) BombTimer = 0;
+        if (BombTimer <= 0)
+        {
+            Console.WriteLine($"Terrorists win!");
+            Tscore++;
+            foreach (var t in Terrorists)
+            {
+                t.Money += 3500;
+            }
+
+            foreach (var ct in CounterTerrorists)
+            {
+                ct.Money += 2000;
+            }
+
+            RoundEnded = true;
+            BombIsPlanted = false;
+        }
+    }
+
+    public int PickRandomPlayer(List<Terrorist> playerList)
     {
         var teamMemberAliveList = playerList.FindAll(x => x.isDead == false).ToList();
         int index = random.Next(0, teamMemberAliveList.Count);
@@ -209,7 +193,7 @@ public class Match
             playerPlanting = playerList.FindIndex(x => x.Name == teamMemberAliveList[index].Name);
         return playerPlanting;
     }
-    private int PickRandomPlayer(List<CounterTerrorist> playerList)
+    public int PickRandomPlayer(List<CounterTerrorist> playerList)
     {
         var teamMemberAliveList = playerList.FindAll(x => x.isDead == false).ToList();
         int index = random.Next(0, teamMemberAliveList.Count);
@@ -236,7 +220,7 @@ public class Match
 
     }
 
-    private void ChooseTarget(char tSite)
+    public void ChooseTarget(char tSite)
     {
         var teamAliveList = CounterTerrorists.FindAll(x => x.isDead == false).ToList();
 
@@ -257,9 +241,8 @@ public class Match
         }
         CounterTerrorists[teamIndex].Shoot(Terrorists[enemyIndex]);
         Terrorists[enemyIndex].Shoot(CounterTerrorists[teamIndex]);
-        Console.Write("\n");
     }
-    private void ChooseTarget()
+    public void ChooseTarget()
     {
         var teamAliveList = Terrorists.FindAll(x => x.isDead == false).ToList();
 
@@ -283,7 +266,7 @@ public class Match
         Console.Write("\n");
     }
 
-    private int[] checkSiteDeaths()
+    public int[] CountDownDeathCheck() // This one is used while Countdown is running
     {
         var totalDead = new int[2];
         foreach (var t in Terrorists)
@@ -297,8 +280,9 @@ public class Match
 
         return totalDead;
     }
-    private bool checkSiteDeaths(bool isAlive)
+    public bool checkSiteDeaths() // Is used to check before bomb is planted
     {
+        var isAlive = true;
         var ctAsiteDead = 0;
         var ctBsiteDead = 0;
         var ctDead = 0;
@@ -375,13 +359,13 @@ public class Match
                 {
                     foreach (var ct in CounterTerrorists)
                     {
-                        await ct.ChooseSite();
+                        ct.ChooseSite();
                     }
 
                     var randomSite = random.Next(0, 9);
                     foreach (var t in Terrorists)
                     {
-                        await t.ChooseSite(randomSite);
+                        t.ChooseSite(randomSite);
                     }
 
                     break;
@@ -451,7 +435,7 @@ public class Match
         }
     }
 
-    private void Introduction()
+    public void Introduction()
     {
         Console.WriteLine($"Welcome to Counter-Stroik: Ginger Offensive!");
         Console.WriteLine($"Match is set to MR {MatchRound} with max rounds: {MaxRounds}");
