@@ -33,7 +33,7 @@ public class CounterTerrorist : Player
         else await Task.Delay(5000);
         Match.BombDefused = true;
         Match.CTscore++;
-        Console.WriteLine("Bomb has been defused!");
+        Console.WriteLine("Bomb has been defused!"); 
         await Task.Delay(1000);
     }
 

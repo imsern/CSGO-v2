@@ -61,10 +61,10 @@ public class Match
 
     public async Task ChanceToPlant()
     {
-        var toPlantOrNotToPlant = random.Next(0, 7) == 3;
+        var toPlantOrNotToPlant = true; //random.Next(0, 7) == 3;
         if (toPlantOrNotToPlant)
         {
-            ChooseTandPlantBomb();
+              ChooseTandPlantBomb();
         }
     }
 
@@ -73,8 +73,9 @@ public class Match
         var randomPlayer = PickRandomPlayer(Terrorists);
         if (randomPlayer != -1)
         {
-            Terrorists[randomPlayer].PlantBomb();
-            BombIsPlanted = true;
+           Terrorists[randomPlayer].PlantBomb();
+           BombIsPlanted = true;
+           ChooseSiteBoth();
         }
     }
 
@@ -126,21 +127,19 @@ public class Match
 
     public void PrintPlayerInfo()
     {
-        Console.WriteLine($"Terrorists are going: {Terrorists[0].chosenSite}");
-        Console.Write($"CT is going: ");
         foreach (var ct in CounterTerrorists)
         {
-            Console.Write($"{ct.chosenSite}, ");
+            Console.WriteLine($"{ct.Name} - {ct.Health} - {ct.chosenSite} ");
         }
-        Console.Write("\n");
+        foreach (var t in Terrorists)
+        {
+            Console.WriteLine($"{t.Name} - {t.Health} {t.chosenSite} ");
+        }
     }
 
     public void CountDown()
     {
-        while (!BombDefused || !RoundEnded)
-        {
-            BombTimer--;
-        }
+        BombTimer--;
     }
 
     public async Task AfterPlantWinCheck()
@@ -163,7 +162,7 @@ public class Match
         // T = 0, CT = 1
         var totalDeaths = CountDownDeathCheck();
         var randomPlayer = PickRandomPlayer(CounterTerrorists);
-        if (totalDeaths[0] == 5 && randomPlayer != -1) CounterTerrorists[randomPlayer].DefuseBomb();
+        if (totalDeaths[0] == 5 && randomPlayer != -1)   CounterTerrorists[randomPlayer].DefuseBomb();
         if (totalDeaths[1] == 5) BombTimer = 0;
         if (BombTimer <= 0)
         {
@@ -216,8 +215,6 @@ public class Match
         {
             ChooseTarget();
         }
-
-
     }
 
     public void ChooseTarget(char tSite)
@@ -351,7 +348,7 @@ public class Match
         return isAlive;
     }
 
-    public async Task chooseSiteBoth()
+    public void ChooseSiteBoth()
     {
         switch (BombIsPlanted)
         {

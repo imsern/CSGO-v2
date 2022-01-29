@@ -27,20 +27,19 @@ public class Terrorist : Player
         Weapon = _tweps[0];
     }
 
-    public async Task PlantBomb()
+    public new async Task PlantBomb()
     {
         Console.WriteLine($"{Name} is Planting the bomb!");
-        await Task.Delay(1000);
+        await  Task.Delay(1000);
         Console.WriteLine($".");
-        await Task.Delay(1000);
+        await  Task.Delay(1000);
         Console.WriteLine($"..");
-        await Task.Delay(1000);
+        await  Task.Delay(1000);
         Console.WriteLine($"...");
-        await Task.Delay(1000);
+        await  Task.Delay(1000);
         Console.WriteLine($"....");
-        await Task.Delay(1000);
+        await  Task.Delay(1000);
         Console.WriteLine($"Bomb has been planted!");
-        Match.BombIsPlanted = true;
     }
     
     public void ChooseSite(int site) // velger om Terror går A eller B
@@ -82,7 +81,7 @@ public class Terrorist : Player
         }
     }
 
-    public bool CheckTeamEco(int value)
+    public new bool CheckTeamEco(int value)
     {
         if (Money > value)
         {
@@ -117,7 +116,7 @@ public class Terrorist : Player
         }
     }
 
-    public void BuyWep(string weapon)
+    public new void BuyWep(string weapon)
     {
         if (weapon == "AWP")
         {
@@ -136,7 +135,7 @@ public class Terrorist : Player
         }
     }
 
-    public void BuyArmor()
+    public new void BuyArmor()
     {
         if (Money > 1000 && Armor == 0)
         {

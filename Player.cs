@@ -12,15 +12,6 @@ public class Player : IPlayer
     public bool isDead { get; set; }
     public char chosenSite { get; set; }
 
-    public Player()
-    {
-        
-    }
-
-    public async Task PlantBomb()
-    {
-        throw new NotImplementedException();
-    }
     public void ChooseSite()
     {
         throw new NotImplementedException();
