@@ -13,8 +13,8 @@ Standard is set to be like a competetive match in the original game(max 30 round
 -CT will swap to the same site as T when bomb is planted.
 
 --Weapons/Buymenu--
--Both teams have their own lists of weapons
--Weapons got damage, accuracy and a cost.
+-Both teams have their own lists of weapons__
+-Weapons got damage, accuracy and a cost.__
 -They will check their economy each round, if they can afford weapons they will buy it
  And also check if the entire team can afford before that happens.
 -First they buy weapon, then they check if they can afford defusekit and/or armor.
