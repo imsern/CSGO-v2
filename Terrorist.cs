@@ -1,15 +1,11 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-
-namespace CSGO_v2;
+﻿namespace CSGO_v2;
 
 public class Terrorist : Player
 {
-    private Random rnd = new();
+    private readonly Random _rnd = new();
 
 
-    public readonly List<Weapon> _tweps = new()
+    public readonly List<Weapon> Tweps = new()
     {
         new Weapon("Glock", 15, 250, 90),
         new Weapon("Deagle", 25, 750, 50),
@@ -24,10 +20,10 @@ public class Terrorist : Player
         Armor = 0;
         Money = 800;
         isDead = false;
-        Weapon = _tweps[0];
+        Weapon = Tweps[0];
     }
 
-    public new async Task PlantBomb()
+    public async Task PlantBomb()
     {
         Console.WriteLine($"{Name} is Planting the bomb!");
         await  Task.Delay(1000);
@@ -44,22 +40,14 @@ public class Terrorist : Player
     
     public void ChooseSite(int site) // velger om Terror går A eller B
     {
-        
-            if (site <= 4)
-            {
-                chosenSite = 'A';
-            }
-            else
-            {
-                chosenSite = 'B';
-            }
+        chosenSite = site <= 4 ? 'A' : 'B';
     }
 
     public void Shoot(CounterTerrorist target)
     {
         if (Health <= 0) isDead = true;
         if (isDead || target.isDead) return;
-        var hit = rnd.Next(0, 100);
+        var hit = _rnd.Next(0, 100);
         if (hit <= Weapon.Accuracy)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
@@ -90,25 +78,25 @@ public class Terrorist : Player
         return false;
     }
 
-    public void CheckPlayerEco(int has2k, int has3k)
+    public void CheckPlayerEco(int has2K, int has3K)
     {
         switch (Money)
         {
-            case > 4900 when has3k >= 4:
+            case > 4900 when has3K >= 4:
                 BuyWep("AWP");
-                Console.WriteLine($"{Name} bought {_tweps[3].Name}");
+                Console.WriteLine($"{Name} bought {Tweps[3].Name}");
                 BuyArmor();
                 //Console.WriteLine($"{Name} has ${Money} left");
                 break;
-            case > 2900 when has3k >= 5:
+            case > 2900 when has3K >= 5:
                 BuyWep("AK");
-                Console.WriteLine($"{Name} bought {_tweps[2].Name}");
+                Console.WriteLine($"{Name} bought {Tweps[2].Name}");
                 BuyArmor();
                 //Console.WriteLine($"{Name} has ${Money} left");
                 break;
-            case > 2000 when has2k >= 5:
+            case > 2000 when has2K >= 5:
                 BuyWep("Deagle");
-                Console.WriteLine($"{Name} bought {_tweps[1].Name}");
+                Console.WriteLine($"{Name} bought {Tweps[1].Name}");
                 BuyArmor();
                 //Console.WriteLine($"{Name} has ${Money} left");
                 break;
@@ -116,26 +104,26 @@ public class Terrorist : Player
         }
     }
 
-    public new void BuyWep(string weapon)
+    private new void BuyWep(string weapon)
     {
-        if (weapon == "AWP")
+        switch (weapon)
         {
-            Weapon = _tweps[3];
-            Money -= _tweps[3].Cost;
-        }
-        if (weapon == "AK")
-        {
-            Weapon = _tweps[2];
-            Money -= _tweps[2].Cost;
-        }
-        if (weapon == "Deagle")
-        {
-            Weapon = _tweps[1];
-            Money -= _tweps[1].Cost;
+            case "AWP":
+                Weapon = Tweps[3];
+                Money -= Tweps[3].Cost;
+                break;
+            case "AK":
+                Weapon = Tweps[2];
+                Money -= Tweps[2].Cost;
+                break;
+            case "Deagle":
+                Weapon = Tweps[1];
+                Money -= Tweps[1].Cost;
+                break;
         }
     }
 
-    public new void BuyArmor()
+    private new void BuyArmor()
     {
         if (Money > 1000 && Armor == 0)
         {
