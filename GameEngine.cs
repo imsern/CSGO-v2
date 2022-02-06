@@ -1,6 +1,4 @@
-﻿using System.Reflection.Metadata.Ecma335;
-
-namespace CSGO_v2;
+﻿namespace CSGO_v2;
 
 public class GameEngine
 {
@@ -20,7 +18,7 @@ public class GameEngine
         if (txt == "start")
             while (!match.GameEnded)
             {                               // This section will be used to reset all values to normal before a round restarts
-                match.StartOrResetRounds();
+                await match.StartOrResetRounds();
                 match.EconomyCheck("CT");
                 match.EconomyCheck("T");
                 match.ChooseSiteBoth();
@@ -28,16 +26,15 @@ public class GameEngine
                 {
                     match.PrintPlayerInfo();
                     match.Fight();
-                    if (!match.checkSiteDeaths() && !Match.BombIsPlanted) match.ChooseTandPlantBomb();
+                    if (!match.CheckSiteDeaths() && !Match.BombIsPlanted) match.ChooseTandPlantBomb();
                     if (!match.RoundEnded)
                     {
-                        //if (!Match.BombIsPlanted) match.ChanceToPlant();
                         if (Match.BombIsPlanted)
                         {
                             match.CountDown();
-                            match.AfterPlantWinCheck();
                         }
                     } 
+                    match.CheckWinConditions();
                     await Task.Delay(1000);
                     Console.Clear();
                 }

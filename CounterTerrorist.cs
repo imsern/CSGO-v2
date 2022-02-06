@@ -1,14 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace CSGO_v2;
+﻿namespace CSGO_v2;
 
 public class CounterTerrorist : Player
 {
-    private Random rnd = new();
+    private readonly Random _rnd = new();
 
-    public bool defusekit { get; set; }
-    public readonly List<Weapon> _cTweps = new()
+    public bool Defusekit { get; set; }
+    public readonly List<Weapon> CTweps = new()
     {
         new Weapon("USP", 15, 250, 90),
         new Weapon("Deagle", 25, 750, 50),
@@ -23,32 +20,37 @@ public class CounterTerrorist : Player
         Armor = 0;
         Money = 800;
         isDead = false;
-        Weapon = _cTweps[0];
+        Weapon = CTweps[0];
     }
 
     public async Task DefuseBomb()
     {
         Console.WriteLine($"{Name} is defusing the bomb!");
-        if (defusekit) await Task.Delay(3000);
-        else await Task.Delay(5000);
+        if (Defusekit)
+        {
+            Match.BombDefused = true;
+            Match.BombIsPlanted = false;
+            Console.WriteLine("Bomb has been defused!");
+            await Task.Delay(3000);
+        }
+        else
+            await Task.Delay(5000);
         Match.BombDefused = true;
-        Match.CTscore++;
-        Console.WriteLine("Bomb has been defused!"); 
-        await Task.Delay(1000);
+        Match.BombIsPlanted = false;
+        Console.WriteLine("Bomb has been defused!");
     }
 
     public new void ChooseSite() // sette 2 til å gå B - 3 til å gå A, RAndom hver runde
     {
-        var randomSite = rnd.Next(0, 9);
-        if (randomSite <= 4) chosenSite = 'A';
-        else chosenSite = 'B';
+        var randomSite = _rnd.Next(0, 9);
+        chosenSite = randomSite <= 4 ? 'A' : 'B';
     }
 
     public void Shoot(Terrorist target)
     {
         if (Health <= 0) isDead = true;
         if (isDead || target.isDead) return;
-        var hit = rnd.Next(0, 100);
+        var hit = _rnd.Next(0, 100);
         if (hit <= Weapon.Accuracy)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
@@ -79,25 +81,25 @@ public class CounterTerrorist : Player
         return false;
     }
 
-    public void CheckPlayerEco(int has2k, int has3k)
+    public void CheckPlayerEco(int has2K, int has3K)
     {
         switch (Money)
         {
-            case > 4900 when has3k >= 4:
+            case > 4900 when has3K >= 4:
                 BuyWep("AWP");
-                Console.WriteLine($"{Name} bought {_cTweps[3].Name}");
+                Console.WriteLine($"{Name} bought {CTweps[3].Name}");
                 BuyArmor();
                 //Console.WriteLine($"{Name} has ${Money} left");
                 break;
-            case > 2900 when has3k >= 5:
+            case > 2900 when has3K >= 5:
                 BuyWep("M4A1");
-                Console.WriteLine($"{Name} bought {_cTweps[2].Name}");
+                Console.WriteLine($"{Name} bought {CTweps[2].Name}");
                 BuyArmor();
                 //Console.WriteLine($"{Name} has ${Money} left");
                 break;
-            case > 2000 when has2k >= 5:
+            case > 2000 when has2K >= 5:
                 BuyWep("Deagle");
-                Console.WriteLine($"{Name} bought {_cTweps[1].Name}");
+                Console.WriteLine($"{Name} bought {CTweps[1].Name}");
                 BuyArmor();
                 //Console.WriteLine($"{Name} has ${Money} left");
                 break;
@@ -105,30 +107,30 @@ public class CounterTerrorist : Player
         }
     }
 
-    public new void BuyWep(string weapon)
+    private new void BuyWep(string weapon)
     {
         if (weapon == "AWP")
         {
-            Weapon = _cTweps[3];
-            Money -= _cTweps[3].Cost;
+            Weapon = CTweps[3];
+            Money -= CTweps[3].Cost;
         }
         if (weapon == "M4A1")
         {
-            Weapon = _cTweps[2];
-            Money -= _cTweps[2].Cost;
+            Weapon = CTweps[2];
+            Money -= CTweps[2].Cost;
         }
         if (weapon == "Deagle")
         {
-            Weapon = _cTweps[1];
-            Money -= _cTweps[1].Cost;
+            Weapon = CTweps[1];
+            Money -= CTweps[1].Cost;
         }
     }
 
-    public new void BuyArmor()
+    private new void BuyArmor()
     {
-        if (Money > 450 && defusekit == false)
+        if (Money > 450 && Defusekit == false)
         {
-            defusekit = true;
+            Defusekit = true;
             Money -= 450;
             Console.WriteLine($"{Name} bought Defuse Kit");
         }
