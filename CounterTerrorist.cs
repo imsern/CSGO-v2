@@ -109,20 +109,20 @@ public class CounterTerrorist : Player
 
     private new void BuyWep(string weapon)
     {
-        if (weapon == "AWP")
+        switch (weapon)
         {
-            Weapon = CTweps[3];
-            Money -= CTweps[3].Cost;
-        }
-        if (weapon == "M4A1")
-        {
-            Weapon = CTweps[2];
-            Money -= CTweps[2].Cost;
-        }
-        if (weapon == "Deagle")
-        {
-            Weapon = CTweps[1];
-            Money -= CTweps[1].Cost;
+            case "AWP":
+                Weapon = CTweps[3];
+                Money -= CTweps[3].Cost;
+                break;
+            case "M4A1":
+                Weapon = CTweps[2];
+                Money -= CTweps[2].Cost;
+                break;
+            case "Deagle":
+                Weapon = CTweps[1];
+                Money -= CTweps[1].Cost;
+                break;
         }
     }
 
