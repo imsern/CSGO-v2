@@ -25,19 +25,22 @@ public class CounterTerrorist : Player
 
     public async Task DefuseBomb()
     {
+        Match.DefuseStarted = true;
         Console.WriteLine($"{Name} is defusing the bomb!");
         if (Defusekit)
         {
+            await Task.Delay(3000);
             Match.BombDefused = true;
             Match.BombIsPlanted = false;
             Console.WriteLine("Bomb has been defused!");
-            await Task.Delay(3000);
+            Match.DefuseStarted = false;
         }
         else
             await Task.Delay(5000);
         Match.BombDefused = true;
         Match.BombIsPlanted = false;
         Console.WriteLine("Bomb has been defused!");
+        Match.DefuseStarted = false;
     }
 
     public new void ChooseSite() // sette 2 til å gå B - 3 til å gå A, RAndom hver runde
@@ -83,25 +86,26 @@ public class CounterTerrorist : Player
 
     public void CheckPlayerEco(int has2K, int has3K)
     {
+        if (Weapon != CTweps[0]) return;
         switch (Money)
         {
             case > 4900 when has3K >= 4:
                 BuyWep("AWP");
                 Console.WriteLine($"{Name} bought {CTweps[3].Name}");
                 BuyArmor();
-                //Console.WriteLine($"{Name} has ${Money} left");
+                
                 break;
             case > 2900 when has3K >= 5:
                 BuyWep("M4A1");
                 Console.WriteLine($"{Name} bought {CTweps[2].Name}");
                 BuyArmor();
-                //Console.WriteLine($"{Name} has ${Money} left");
+                
                 break;
             case > 2000 when has2K >= 5:
                 BuyWep("Deagle");
                 Console.WriteLine($"{Name} bought {CTweps[1].Name}");
                 BuyArmor();
-                //Console.WriteLine($"{Name} has ${Money} left");
+                
                 break;
             default: return;
         }

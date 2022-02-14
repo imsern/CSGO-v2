@@ -9,11 +9,12 @@ public class Match
     public static bool BombIsPlanted { get; set; }
     private int BombTimer { get; set; }
     public static bool BombDefused { get; set; }
+    public static bool DefuseStarted { get; set; }
     public bool RoundEnded { get; private set; }
     public bool GameEnded { get; set; }
     private static int Tscore { get; set; }
     private static int CTscore { get; set; }
-    private static readonly List<CounterTerrorist> CounterTerrorists = new();
+    internal readonly List<CounterTerrorist> CounterTerrorists = new();
     private static readonly List<Terrorist> Terrorists = new();
 
     private readonly List<string> _teamNames1 = new()
@@ -46,6 +47,7 @@ public class Match
         BombIsPlanted = false;
         GameEnded = false;
         RoundEnded = false;
+        DefuseStarted = false;
         InitPlayers();
     }
 
@@ -81,8 +83,7 @@ public class Match
         // If T's die CT wont win until bomb is defused
         if(BombIsPlanted){
             var totalDeaths = CountDownDeathCheck();
-            var randomPlayer = PickRandomPlayer(CounterTerrorists);
-            if (totalDeaths[0] == 5 && randomPlayer != -1) CounterTerrorists[randomPlayer].DefuseBomb();
+            
             if (totalDeaths[1] == 5) BombTimer = 0;
             if (BombTimer <= 0)
             {
@@ -96,15 +97,15 @@ public class Match
             CounterTerroristWins();
         }
 
-        if (CTscore == 16)
+        if (CTscore == MatchRound)
         {
             Console.WriteLine($"Counter-Terrorists won the match!");
             GameEnded = true;
-        }else if (Tscore == 16)
+        }else if (Tscore == MatchRound)
         {
             Console.WriteLine($"Terrorists won the match!");
             GameEnded = true;
-        }else if (Tscore == 15 && CTscore == 15)
+        }else if (Tscore == MatchRound-1 && CTscore == MatchRound-1)
         {
             Console.WriteLine("Its a draw!!");
             GameEnded = true;
@@ -219,6 +220,9 @@ public class Match
     public void PrintPlayerInfo()
     {
         Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine($"Runde: {Round}");
+        Console.WriteLine($"CT: {CTscore}");
+        Console.WriteLine($" T: {Tscore}");
         foreach (var ct in CounterTerrorists)
         {
             Console.WriteLine($"{ct.Name} - {ct.Health} - {ct.chosenSite} - {ct.Money} ");
@@ -237,48 +241,7 @@ public class Match
         BombTimer--;
     }
 
-    // public async Task AfterPlantWinCheck()
-    // {
-    //     if (BombDefused)
-    //     {
-    //         Console.WriteLine($"Counter-Terrorists win!");
-    //         CTscore++;
-    //         foreach (var ct in CounterTerrorists)
-    //         {
-    //             ct.Money += 3500;
-    //         }
-    //         foreach (var t in Terrorists)
-    //         {
-    //             t.Money += 2000;
-    //         }
-    //         RoundEnded = true;
-    //         BombIsPlanted = false;
-    //     }
-    //     // T = 0, CT = 1
-    //     var totalDeaths = CountDownDeathCheck();
-    //     var randomPlayer = PickRandomPlayer(CounterTerrorists);
-    //     if (totalDeaths[0] == 5 && randomPlayer != -1)   CounterTerrorists[randomPlayer].DefuseBomb();
-    //     if (totalDeaths[1] == 5) BombTimer = 0;
-    //     if (BombTimer <= 0)
-    //     {
-    //         Console.WriteLine($"Terrorists win!");
-    //         Tscore++;
-    //         foreach (var t in Terrorists)
-    //         {
-    //             t.Money += 3500;
-    //         }
-    //
-    //         foreach (var ct in CounterTerrorists)
-    //         {
-    //             ct.Money += 2000;
-    //         }
-    //
-    //         RoundEnded = true;
-    //         BombIsPlanted = false;
-    //     }
-    // }
-
-    private int PickRandomPlayer(List<Terrorist> playerList)
+    public int PickRandomPlayer(List<Terrorist> playerList)
     {
         var teamMemberAliveList = playerList.FindAll(x => x.isDead == false).ToList();
         int index = _random.Next(0, teamMemberAliveList.Count);
@@ -288,7 +251,7 @@ public class Match
         return playerPlanting;
     }
 
-    private int PickRandomPlayer(List<CounterTerrorist> playerList)
+    public int PickRandomPlayer(List<CounterTerrorist> playerList)
     {
         var teamMemberAliveList = playerList.FindAll(x => x.isDead == false).ToList();
         int index = _random.Next(0, teamMemberAliveList.Count);
@@ -360,7 +323,7 @@ public class Match
         CounterTerrorists[enemyIndex].Shoot(Terrorists[teamIndex]);
     }
 
-    private static int[] CountDownDeathCheck() // This one is used while Countdown is running
+    internal int[] CountDownDeathCheck() // This one is used while Countdown is running
     {
         var totalDead = new int[2];
         foreach (var unused in Terrorists.Where(t => t.isDead))
@@ -376,7 +339,7 @@ public class Match
         return totalDead;
     }
 
-    public static bool CheckSiteDeaths() // Is used to check before bomb is planted
+    public bool CheckSiteDeaths() // Is used to check before bomb is planted
     {
         var isAlive = true;
         var ctAsiteDead = 0;
@@ -440,7 +403,7 @@ public class Match
     }
 
     // må sjekke for 2k, 3k og 5k
-    public static void
+    public void
         EconomyCheck(
             string team) // MÅ NOK STÅ I MATCH FOR Å KUNNE GÅ IGJENNOM ØKONOMI FOR HELE LAGET OG SENDE VIDERE TIL CHECKTEAMECO I HVERT ENKELT LAG
     {

@@ -19,18 +19,23 @@ public class GameEngine
             while (!match.GameEnded)
             {                               // This section will be used to reset all values to normal before a round restarts
                 await match.StartOrResetRounds();
-                Match.EconomyCheck("CT");
-                Match.EconomyCheck("T");
+                match.EconomyCheck("CT");
+                await Task.Delay(2500);
+                match.EconomyCheck("T");
+                await Task.Delay(2500);
                 match.ChooseSiteBoth();
                 while (!match.RoundEnded) // Everything happening while a bomb isnt planted
                 {
                     match.PrintPlayerInfo();
                     match.Fight();
-                    if (!Match.CheckSiteDeaths() && !Match.BombIsPlanted) await match.ChooseTandPlantBomb();
+                    if (!match.CheckSiteDeaths() && !Match.BombIsPlanted) await match.ChooseTandPlantBomb();
                     if (!match.RoundEnded)
                     {
                         if (Match.BombIsPlanted)
                         {
+                            var totalDeaths = match.CountDownDeathCheck();
+                            var randomPlayer = match.PickRandomPlayer(match.CounterTerrorists);
+                            if (totalDeaths[0] == 5 && randomPlayer != -1 && !Match.DefuseStarted) match.CounterTerrorists[randomPlayer].DefuseBomb();
                             match.CountDown();
                         }
                     } 
