@@ -23,7 +23,6 @@ public class Terrorist : Player
         isDead = false;
         Weapon = Tweps[0];
     }
-
     public async Task PlantBomb()
     {
         vp.PrintCenter($"{Name} is Planting the bomb!");
@@ -43,33 +42,7 @@ public class Terrorist : Player
     {
         chosenSite = site <= 4 ? 'A' : 'B';
     }
-
-    public void Shoot(CounterTerrorist target)
-    {
-        if (Health <= 0) isDead = true;
-        if (isDead || target.isDead) return;
-        var hit = _rnd.Next(0, 100);
-        if (hit <= Weapon.Accuracy)
-        {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            vp.PrintCenter($"{Name} hits {target.Name} for {Weapon.Damage} damage.");
-            target.Health -= Weapon.Damage;
-            if (target.Health <= 0)
-            {
-                target.isDead = true;
-                target.Health = 0;
-                Money += 300;
-                Console.ForegroundColor = ConsoleColor.Red;
-                vp.PrintCenter($"{target.Name} died!");
-            }
-        }
-        else
-        {
-            Console.ForegroundColor = ConsoleColor.White;
-            vp.PrintCenter($"{Name} missed {target.Name}! ");
-        }
-    }
-
+    
     public new bool CheckTeamEco(int value)
     {
         if (Money > value)
@@ -78,7 +51,7 @@ public class Terrorist : Player
         }
         return false;
     }
-
+    
     public void CheckPlayerEco(int has2K, int has3K)
     {
         switch (Money)
@@ -101,7 +74,7 @@ public class Terrorist : Player
             default: return;
         }
     }
-
+    
     private new void BuyWep(string weapon)
     {
         switch (weapon)

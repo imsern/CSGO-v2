@@ -2,36 +2,44 @@
 
 public class Player : IPlayer
 {
-    
-    public string Name { get; set; }
-    public string Team { get; set; }
+    private readonly Random _rnd = new();
+    public string Name { get; protected init; }
+    protected string Team { get; set; }
     public int Health { get; set; }
     public Weapon Weapon { get; set; }
     public int Armor { get; set; }
     public int Money { get; set; }
     public bool isDead { get; set; }
     public char chosenSite { get; set; }
-
-    public void ChooseSite()
+    private readonly ViewPrint _vp = new ViewPrint();
+    
+    public void Shoot(Player target, string player)
     {
-        throw new NotImplementedException();
+        if (Health <= 0) isDead = true;
+        if (isDead || target.isDead) return;
+        var hit = _rnd.Next(0, 100);
+        if (hit <= Weapon.Accuracy)
+        {
+            if(player == "CT") Console.ForegroundColor = ConsoleColor.Cyan;
+            if(player == "T") Console.ForegroundColor = ConsoleColor.Yellow;
+            _vp.PrintCenter($"{Name} hits {target.Name} for {Weapon.Damage} damage.");
+            target.Health -= Weapon.Damage;
+            if (target.Health <= 0)
+            {
+                target.isDead = true;
+                target.Health = 0;
+                Money += 300;
+                Console.ForegroundColor = ConsoleColor.Red;
+                _vp.PrintCenter($"{target.Name} died!");
+            }
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            _vp.PrintCenter($"{Name} missed {target.Name}!");
+        }
     }
-
-    public void Shoot(Player target)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool CheckTeamEco(int value)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void CheckPlayerEco(int has2k, int has3k, string team)
-    {
-        throw new NotImplementedException();
-    }
-
+    
     public void BuyWep(string weapon)
     {
         throw new NotImplementedException();

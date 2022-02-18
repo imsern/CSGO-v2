@@ -44,39 +44,13 @@ public class CounterTerrorist : Player
         Match.DefuseStarted = false;
     }
 
-    public new void ChooseSite() // sette 2 til å gå B - 3 til å gå A, RAndom hver runde
+    public void ChooseSite() // sette 2 til å gå B - 3 til å gå A, RAndom hver runde
     {
         var randomSite = _rnd.Next(0, 9);
         chosenSite = randomSite <= 4 ? 'A' : 'B';
     }
-
-    public void Shoot(Terrorist target)
-    {
-        if (Health <= 0) isDead = true;
-        if (isDead || target.isDead) return;
-        var hit = _rnd.Next(0, 100);
-        if (hit <= Weapon.Accuracy)
-        {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            vp.PrintCenter($"{Name} hits {target.Name} for {Weapon.Damage} damage.");
-            target.Health -= Weapon.Damage;
-            if (target.Health <= 0)
-            {
-                target.isDead = true;
-                target.Health = 0;
-                Money += 300;
-                Console.ForegroundColor = ConsoleColor.Red;
-                vp.PrintCenter($"{target.Name} died!");
-            }
-        }
-        else
-        {
-            Console.ForegroundColor = ConsoleColor.White;
-            vp.PrintCenter($"{Name} missed {target.Name}!");
-        }
-    }
-
-    public new bool CheckTeamEco(int value)
+    
+    public bool CheckTeamEco(int value)
     {
         if (Money > value)
         {
@@ -92,19 +66,15 @@ public class CounterTerrorist : Player
         {
             case > 4900 when has3K >= 4:
                 BuyWep("AWP");
-                //Console.WriteLine($"{Name} bought {CTweps[3].Name}");
                 BuyArmor();
-                
                 break;
             case > 2900 when has3K >= 5:
                 BuyWep("M4A1");
-                //Console.WriteLine($"{Name} bought {CTweps[2].Name}");
                 BuyArmor();
                 
                 break;
             case > 2000 when has2K >= 5:
                 BuyWep("Deagle");
-                //Console.WriteLine($"{Name} bought {CTweps[1].Name}");
                 BuyArmor();
                 
                 break;
@@ -137,14 +107,12 @@ public class CounterTerrorist : Player
         {
             Defusekit = true;
             Money -= 450;
-            //Console.WriteLine($"{Name} bought Defuse Kit");
         }
         if (Money > 1000 && Armor == 0)
         {
             Armor = 50;
             Health = 100 + Armor;
             Money -= 1000;
-            //Console.WriteLine($"{Name} bought Armor");
         }
     }
 }

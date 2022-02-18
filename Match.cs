@@ -35,7 +35,7 @@ public class Match
         "Modu13 Stian"
     };
 
-    private ViewPrint vp = new ViewPrint();
+    private readonly ViewPrint viewprint = new ViewPrint();
 
     public Match(int matchround, int maxrounds)
     {
@@ -115,7 +115,7 @@ public class Match
 
     private void CounterTerroristWins()
     {
-        vp.PrintCenter($"Counter-Terrorists win!");
+        viewprint.PrintCenter($"Counter-Terrorists win!");
         foreach (var ct in CounterTerrorists)
         {
             ct.Money += 3500;
@@ -137,7 +137,7 @@ public class Match
 
     private void TerroristWins()
     {
-        vp.PrintCenter($"Terrorists win!");
+        viewprint.PrintCenter($"Terrorists win!");
         Tscore++;
         foreach (var t in Terrorists)
         {
@@ -216,9 +216,7 @@ public class Match
         PrintMatchInfo();
         PlayerInfo();
     }
-
     
-
     public void CountDown()
     {
         BombTimer--;
@@ -279,8 +277,8 @@ public class Match
         var enemyRandomAliveIndex = _random.Next(0, enemyAliveList.Count);
         var enemyIndex = Terrorists.FindIndex(x => x.Name == enemyAliveList[enemyRandomAliveIndex].Name);
 
-        CounterTerrorists[teamIndex].Shoot(Terrorists[enemyIndex]);
-        Terrorists[enemyIndex].Shoot(CounterTerrorists[teamIndex]);
+        CounterTerrorists[teamIndex].Shoot(Terrorists[enemyIndex], "CT");
+        Terrorists[enemyIndex].Shoot(CounterTerrorists[teamIndex], "T");
     }
 
     private void ChooseTarget()
@@ -302,8 +300,8 @@ public class Match
         var enemyRandomIndex = _random.Next(0, enemyOnSiteList.Count);
         var enemyIndex = CounterTerrorists.FindIndex(x => x.Name == enemyOnSiteList[enemyRandomIndex].Name);
 
-        Terrorists[teamIndex].Shoot(CounterTerrorists[enemyIndex]);
-        CounterTerrorists[enemyIndex].Shoot(Terrorists[teamIndex]);
+        Terrorists[teamIndex].Shoot(CounterTerrorists[enemyIndex], "T");
+        CounterTerrorists[enemyIndex].Shoot(Terrorists[teamIndex],"CT");
     }
 
     internal int[] CountDownDeathCheck() // This one is used while Countdown is running
@@ -386,9 +384,7 @@ public class Match
     }
 
     // må sjekke for 2k, 3k og 5k
-    public void
-        EconomyCheck(
-            string team) // MÅ NOK STÅ I MATCH FOR Å KUNNE GÅ IGJENNOM ØKONOMI FOR HELE LAGET OG SENDE VIDERE TIL CHECKTEAMECO I HVERT ENKELT LAG
+    public void EconomyCheck(string team) 
     {
         var has2K = 0;
         var has3K = 0;
@@ -401,6 +397,7 @@ public class Match
                     if (ct.CheckTeamEco(3000))
                     {
                         has3K++;
+                        has2K++;
                     }
                     else if (ct.CheckTeamEco(2000))
                     {
@@ -442,26 +439,38 @@ public class Match
     public void PrintMatchInfo()
     {
         Console.ForegroundColor = ConsoleColor.White;
-        vp.PrintCenter($"Round: {Round}");
-        vp.PrintCenter($"CT: {CTscore}");
-        vp.PrintCenter($"T: {Tscore}");
-        if (BombIsPlanted) vp.PrintCenter($"Bomb timer: {BombTimer}");
+        viewprint.PrintCenter($"Round: {Round}");
+        viewprint.PrintCenter($"CT: {CTscore}");
+        viewprint.PrintCenter($"T: {Tscore}");
+        if (BombIsPlanted) viewprint.PrintCenter($"Bomb timer: {BombTimer}");
     }
+    
     public void PlayerInfo()
     {
-        vp.PrintPlayerInfo($"NAME - WEAPON - ARMOR - HEALTH - MONEY || MONEY - HEALTH - ARMOR - NAME");
+        Console.WriteLine("            NAME             WEAPON ARMOR HEALTH  MONEY                     MONEY  HEALTH ARMOR   WEAPON        NAME");
         for (var i = 0; i < 5; i++)
         {
             var CTgotArmor = CounterTerrorists[i].Health > 100 ? "Yes" : "No";
             var TgotArmor = Terrorists[i].Health > 100 ? "Yes" : "No";
-            vp.PrintPlayerInfo($"{CounterTerrorists[i].Name} - {CounterTerrorists[i].Weapon.Name} - {CTgotArmor} - {CounterTerrorists[i].Health} - {CounterTerrorists[i].Money} || {Terrorists[i].Money} - {Terrorists[i].Health} - {TgotArmor} - {Terrorists[i].Weapon.Name} - {Terrorists[i].Name}");    
+            Console.WriteLine($"       " +
+                              $"{CounterTerrorists[i].Name.PadRight(20, ' ')}" +
+                              $"{CounterTerrorists[i].Weapon.Name.PadLeft(6, ' ')}  " +
+                              $"{CTgotArmor.PadLeft(3, ' ')}    " +
+                              $"{CounterTerrorists[i].Health.ToString().PadLeft(3, ' ')}    " +
+                              $"{CounterTerrorists[i].Money.ToString().PadLeft(5, ' ')}                     " +
+                              $"{Terrorists[i].Money.ToString().PadLeft(5, ' ')}    " +
+                              $"{Terrorists[i].Health.ToString().PadLeft(3, ' ')}   " +
+                              $"{TgotArmor.PadLeft(3, ' ')}     " +
+                              $"{Terrorists[i].Weapon.Name.PadLeft(6, ' ')}     " +
+                              $"{Terrorists[i].Name}");    
         }
     }
+    
     public void Introduction()
     {
-        vp.PrintCenter($"Welcome to Counter-Stroik: Ginger Offensive!");
-        vp.PrintCenter($"Match is set to MR {MatchRound} with max rounds: {MaxRounds}");
-        vp.PrintCenter($"First team to reach {MatchRound} rounds win!");
-        vp.PrintCenter($"Whenever you're ready type - Start");
+        viewprint.PrintCenter($"Welcome to Counter-Stroik: Ginger Offensive!");
+        viewprint.PrintCenter($"Match is set to MR {MatchRound} with max rounds: {MaxRounds}");
+        viewprint.PrintCenter($"First team to reach {MatchRound} rounds win!");
+        viewprint.PrintCenter($"Whenever you're ready type - Start");
     }
 }
