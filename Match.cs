@@ -35,6 +35,7 @@ public class Match
         "Modu13 Stian"
     };
 
+    private ViewPrint vp = new ViewPrint();
 
     public Match(int matchround, int maxrounds)
     {
@@ -114,7 +115,7 @@ public class Match
 
     private void CounterTerroristWins()
     {
-        Console.WriteLine($"Counter-Terrorists win!");
+        vp.PrintCenter($"Counter-Terrorists win!");
         foreach (var ct in CounterTerrorists)
         {
             ct.Money += 3500;
@@ -136,7 +137,7 @@ public class Match
 
     private void TerroristWins()
     {
-        Console.WriteLine($"Terrorists win!");
+        vp.PrintCenter($"Terrorists win!");
         Tscore++;
         foreach (var t in Terrorists)
         {
@@ -212,29 +213,11 @@ public class Match
 
         Console.ForegroundColor = ConsoleColor.White;
         Round++;
-        Console.WriteLine($"Runde: {Round}");
-        Console.WriteLine($"CT: {CTscore}");
-        Console.WriteLine($" T: {Tscore}");
+        PrintMatchInfo();
+        PlayerInfo();
     }
 
-    public void PrintPlayerInfo()
-    {
-        Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine($"Runde: {Round}");
-        Console.WriteLine($"CT: {CTscore}");
-        Console.WriteLine($" T: {Tscore}");
-        foreach (var ct in CounterTerrorists)
-        {
-            Console.WriteLine($"{ct.Name} - {ct.Health} - {ct.chosenSite} - {ct.Money} ");
-        }
-
-        foreach (var t in Terrorists)
-        {
-            Console.WriteLine($"{t.Name} - {t.Health} {t.chosenSite} - {t.Money} ");
-        }
-
-        if (BombIsPlanted) Console.WriteLine($"Bomb timer: {BombTimer}");
-    }
+    
 
     public void CountDown()
     {
@@ -456,11 +439,29 @@ public class Match
         }
     }
 
+    public void PrintMatchInfo()
+    {
+        Console.ForegroundColor = ConsoleColor.White;
+        vp.PrintCenter($"Round: {Round}");
+        vp.PrintCenter($"CT: {CTscore}");
+        vp.PrintCenter($"T: {Tscore}");
+        if (BombIsPlanted) vp.PrintCenter($"Bomb timer: {BombTimer}");
+    }
+    public void PlayerInfo()
+    {
+        vp.PrintPlayerInfo($"NAME - WEAPON - ARMOR - HEALTH - MONEY || MONEY - HEALTH - ARMOR - NAME");
+        for (var i = 0; i < 5; i++)
+        {
+            var CTgotArmor = CounterTerrorists[i].Health > 100 ? "Yes" : "No";
+            var TgotArmor = Terrorists[i].Health > 100 ? "Yes" : "No";
+            vp.PrintPlayerInfo($"{CounterTerrorists[i].Name} - {CounterTerrorists[i].Weapon.Name} - {CTgotArmor} - {CounterTerrorists[i].Health} - {CounterTerrorists[i].Money} || {Terrorists[i].Money} - {Terrorists[i].Health} - {TgotArmor} - {Terrorists[i].Weapon.Name} - {Terrorists[i].Name}");    
+        }
+    }
     public void Introduction()
     {
-        Console.WriteLine($"Welcome to Counter-Stroik: Ginger Offensive!");
-        Console.WriteLine($"Match is set to MR {MatchRound} with max rounds: {MaxRounds}");
-        Console.WriteLine($"First team to reach {MatchRound} rounds win!");
-        Console.WriteLine($"Whenever you're ready type - Start");
+        vp.PrintCenter($"Welcome to Counter-Stroik: Ginger Offensive!");
+        vp.PrintCenter($"Match is set to MR {MatchRound} with max rounds: {MaxRounds}");
+        vp.PrintCenter($"First team to reach {MatchRound} rounds win!");
+        vp.PrintCenter($"Whenever you're ready type - Start");
     }
 }

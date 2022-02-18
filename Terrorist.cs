@@ -3,6 +3,7 @@
 public class Terrorist : Player
 {
     private readonly Random _rnd = new();
+    private ViewPrint vp = new ViewPrint();
 
 
     public readonly List<Weapon> Tweps = new()
@@ -25,17 +26,17 @@ public class Terrorist : Player
 
     public async Task PlantBomb()
     {
-        Console.WriteLine($"{Name} is Planting the bomb!");
+        vp.PrintCenter($"{Name} is Planting the bomb!");
         await  Task.Delay(1000);
-        Console.WriteLine($".");
+        vp.PrintCenter($".");
         await  Task.Delay(1000);
-        Console.WriteLine($"..");
+        vp.PrintCenter($"..");
         await  Task.Delay(1000);
-        Console.WriteLine($"...");
+        vp.PrintCenter($"...");
         await  Task.Delay(1000);
-        Console.WriteLine($"....");
+        vp.PrintCenter($"....");
         await  Task.Delay(1000);
-        Console.WriteLine($"Bomb has been planted!");
+        vp.PrintCenter($"Bomb has been planted!");
     }
     
     public void ChooseSite(int site) // velger om Terror går A eller B
@@ -51,7 +52,7 @@ public class Terrorist : Player
         if (hit <= Weapon.Accuracy)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"{Name} hits {target.Name} for {Weapon.Damage} damage.");
+            vp.PrintCenter($"{Name} hits {target.Name} for {Weapon.Damage} damage.");
             target.Health -= Weapon.Damage;
             if (target.Health <= 0)
             {
@@ -59,13 +60,13 @@ public class Terrorist : Player
                 target.Health = 0;
                 Money += 300;
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"{target.Name} died!");
+                vp.PrintCenter($"{target.Name} died!");
             }
         }
         else
         {
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine($"{Name} missed {target.Name}! ");
+            vp.PrintCenter($"{Name} missed {target.Name}! ");
         }
     }
 
@@ -84,21 +85,18 @@ public class Terrorist : Player
         {
             case > 4900 when has3K >= 4:
                 BuyWep("AWP");
-                Console.WriteLine($"{Name} bought {Tweps[3].Name}");
+                //Console.WriteLine($"{Name} bought {Tweps[3].Name}");
                 BuyArmor();
-                //Console.WriteLine($"{Name} has ${Money} left");
                 break;
             case > 2900 when has3K >= 5:
                 BuyWep("AK");
-                Console.WriteLine($"{Name} bought {Tweps[2].Name}");
+                //Console.WriteLine($"{Name} bought {Tweps[2].Name}");
                 BuyArmor();
-                //Console.WriteLine($"{Name} has ${Money} left");
                 break;
             case > 2000 when has2K >= 5:
                 BuyWep("Deagle");
-                Console.WriteLine($"{Name} bought {Tweps[1].Name}");
+                //Console.WriteLine($"{Name} bought {Tweps[1].Name}");
                 BuyArmor();
-                //Console.WriteLine($"{Name} has ${Money} left");
                 break;
             default: return;
         }
@@ -130,7 +128,7 @@ public class Terrorist : Player
             Armor = 50;
             Health = 100 + Armor;
             Money -= 1000;
-            Console.WriteLine($"{Name} bought Armor");
+            //Console.WriteLine($"{Name} bought Armor");
         }
     }
 }

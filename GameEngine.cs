@@ -15,7 +15,7 @@ public class GameEngine
         var match = new Match(Matchrounds, Maxround);
         match.Introduction();
         var txt = Console.ReadLine()!.ToLower();
-        if (txt == "start")
+        if (txt == "start") Console.Clear();
             while (!match.GameEnded)
             {                               // This section will be used to reset all values to normal before a round restarts
                 await match.StartOrResetRounds();
@@ -24,9 +24,11 @@ public class GameEngine
                 match.EconomyCheck("T");
                 await Task.Delay(2500);
                 match.ChooseSiteBoth();
+                Console.Clear();
                 while (!match.RoundEnded) // Everything happening while a bomb isnt planted
                 {
-                    match.PrintPlayerInfo();
+                    match.PrintMatchInfo();
+                    match.PlayerInfo();
                     match.Fight();
                     if (!match.CheckSiteDeaths() && !Match.BombIsPlanted) await match.ChooseTandPlantBomb();
                     if (!match.RoundEnded)

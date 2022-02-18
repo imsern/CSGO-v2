@@ -3,6 +3,7 @@
 public class CounterTerrorist : Player
 {
     private readonly Random _rnd = new();
+    private ViewPrint vp = new ViewPrint();
 
     public bool Defusekit { get; set; }
     public readonly List<Weapon> CTweps = new()
@@ -26,20 +27,20 @@ public class CounterTerrorist : Player
     public async Task DefuseBomb()
     {
         Match.DefuseStarted = true;
-        Console.WriteLine($"{Name} is defusing the bomb!");
+        vp.PrintCenter($"{Name} is defusing the bomb!");
         if (Defusekit)
         {
             await Task.Delay(3000);
             Match.BombDefused = true;
             Match.BombIsPlanted = false;
-            Console.WriteLine("Bomb has been defused!");
+            vp.PrintCenter("Bomb has been defused!");
             Match.DefuseStarted = false;
         }
         else
             await Task.Delay(5000);
         Match.BombDefused = true;
         Match.BombIsPlanted = false;
-        Console.WriteLine("Bomb has been defused!");
+        vp.PrintCenter("Bomb has been defused!");
         Match.DefuseStarted = false;
     }
 
@@ -57,7 +58,7 @@ public class CounterTerrorist : Player
         if (hit <= Weapon.Accuracy)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine($"{Name} hits {target.Name} for {Weapon.Damage} damage.");
+            vp.PrintCenter($"{Name} hits {target.Name} for {Weapon.Damage} damage.");
             target.Health -= Weapon.Damage;
             if (target.Health <= 0)
             {
@@ -65,13 +66,13 @@ public class CounterTerrorist : Player
                 target.Health = 0;
                 Money += 300;
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"{target.Name} died!");
+                vp.PrintCenter($"{target.Name} died!");
             }
         }
         else
         {
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine($"{Name} missed {target.Name}!");
+            vp.PrintCenter($"{Name} missed {target.Name}!");
         }
     }
 
@@ -91,19 +92,19 @@ public class CounterTerrorist : Player
         {
             case > 4900 when has3K >= 4:
                 BuyWep("AWP");
-                Console.WriteLine($"{Name} bought {CTweps[3].Name}");
+                //Console.WriteLine($"{Name} bought {CTweps[3].Name}");
                 BuyArmor();
                 
                 break;
             case > 2900 when has3K >= 5:
                 BuyWep("M4A1");
-                Console.WriteLine($"{Name} bought {CTweps[2].Name}");
+                //Console.WriteLine($"{Name} bought {CTweps[2].Name}");
                 BuyArmor();
                 
                 break;
             case > 2000 when has2K >= 5:
                 BuyWep("Deagle");
-                Console.WriteLine($"{Name} bought {CTweps[1].Name}");
+                //Console.WriteLine($"{Name} bought {CTweps[1].Name}");
                 BuyArmor();
                 
                 break;
@@ -136,14 +137,14 @@ public class CounterTerrorist : Player
         {
             Defusekit = true;
             Money -= 450;
-            Console.WriteLine($"{Name} bought Defuse Kit");
+            //Console.WriteLine($"{Name} bought Defuse Kit");
         }
         if (Money > 1000 && Armor == 0)
         {
             Armor = 50;
             Health = 100 + Armor;
             Money -= 1000;
-            Console.WriteLine($"{Name} bought Armor");
+            //Console.WriteLine($"{Name} bought Armor");
         }
     }
 }
