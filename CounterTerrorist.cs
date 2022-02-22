@@ -61,7 +61,7 @@ public class CounterTerrorist : Player
 
     public void CheckPlayerEco(int has2K, int has3K)
     {
-        if (Weapon != CTweps[0]) return;
+        if (Weapon != CTweps[0]) BuyArmor();
         switch (Money)
         {
             case > 4900 when has3K >= 4:

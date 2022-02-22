@@ -54,7 +54,7 @@ public class Terrorist : Player
     
     public void CheckPlayerEco(int has2K, int has3K)
     {
-        if (Weapon != Tweps[0]) return;
+        if (Weapon != Tweps[0]) BuyArmor();
         switch (Money)
         {
             case > 4900 when has3K >= 4:
